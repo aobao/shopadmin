@@ -1,42 +1,92 @@
 <template>
     <div>
+<el-row>
+  <!-- <el-button type="primary" target='#add' class='mybtn'> 添加商品</el-button> -->
+  <el-button type="primary" @click="dialogFormVisible = true" class='mybtn'>添加商品</el-button>
+</el-row>
+<el-table :data="tableData" stripe border style="width: 100%" class='mytab' title='商品展示'>
+<el-table-column align='center' prop="id" label="id" fixed width="100"></el-table-column>
+<el-table-column align='center' prop="title" label="描述" width="200"> </el-table-column>
+<el-table-column align='center' prop="name" label="中文名字" width="200"> </el-table-column>
+<el-table-column align='center' prop="con" label="具体介绍" width="300"> </el-table-column>
+<el-table-column align='center' prop="econ" label="英文介绍" width="200"> </el-table-column>
+<el-table-column align='center' prop="img" label="图片" width="100"> </el-table-column> 
+<el-table-column align='center' prop="offprice" label="减价价格" width="100"> </el-table-column>
+<el-table-column align='center' prop="price" label="价格" width="100"> </el-table-column>
+<el-table-column align='center' prop="amount" label="数量" width='100'> </el-table-column>
+<el-table-column align='center' prop="degra" label="度数" width="100"> </el-table-column>
+<el-table-column align='center' prop="sap" label="溶积" width="100"></el-table-column>
+<el-table-column align='center' prop="type" label="口味" width="200"> </el-table-column>
+<el-table-column align='center' label="操作" fixed='right' width='200'>
+<template slot-scope="scope">
+<el-button
+size="mini"
+@click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+<el-button
+size="mini"
+type="danger"
+@click="handleDelete(scope.$index, scope.row)">删除</el-button>
+</template>
+</el-table-column>
+</el-table>
+<el-dialog title="修改商品" :visible.sync="editvisible">
+<el-form ref="form" :model="editform" label-width="80px">
+  <el-form-item label="ID"><el-input v-model="editform.id"></el-input></el-form-item>
+  <el-form-item label="描述"><el-input v-model="editform.title"></el-input></el-form-item>
+  <el-form-item label="中文名字"><el-input v-model="editform.name"></el-input></el-form-item>
+  <el-form-item label="具体介绍"><el-input v-model="editform.con"></el-input></el-form-item>
+  <el-form-item label="英文介绍"><el-input v-model="editform.econ"></el-input></el-form-item>
+  <el-form-item label="图片"><el-input v-model="editform.img"></el-input>
+  </el-form-item>
+  <el-form-item label="减价价格"><el-input v-model="editform.offprice"></el-input></el-form-item>
+  <el-form-item label="价格"><el-input v-model="editform.price"></el-input></el-form-item>
+  <el-form-item label="数量"><el-input v-model="editform.amount"></el-input></el-form-item>
+  <el-form-item label="度数"><el-input v-model="editform.degra"></el-input></el-form-item>
+  <el-form-item label="容积"><el-input v-model="editform.sap"></el-input></el-form-item>
+  <el-form-item label="口味"><el-input v-model="editform.type"></el-input></el-form-item>
+  
+  <el-form-item>
+    <el-button type="primary" @click="editsub">提交</el-button>
+    <el-button @click='editvisible=false'>取消</el-button>
+  </el-form-item>
+</el-form>  
+</el-dialog>
 
-    <el-table
-    :data="tableData"
-    stripe
-    border
-    style="width: 100%">
-    <el-table-column
-      prop="id"
-      label="id"
-      width="100">
-      </el-table-column>
-      <el-table-column
-      prop="times"
-      label="日期"
-      width="300">
-      </el-table-column>
-      <el-table-column
-      prop="name"
-      label="姓名"
-      width="200">
-      </el-table-column>
-      <el-table-column
-      prop="comment"
-      label="评论内容"
-      width='300'
-      >
-      </el-table-column>
-       <el-table-column label="操作">
-      <template slot-scope="scope">
-       
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-      </template>
-     </el-table-column>
-      </el-table>
+<el-dialog title="添加商品" :visible.sync="dialogFormVisible">
+<el-form ref="form" :model="form" label-width="80px">
+  <!-- <el-form-item label="ID"><el-input v-model="form.id"></el-input></el-form-item> -->
+  <el-form-item label="描述"><el-input v-model="form.title"></el-input></el-form-item>
+  <el-form-item label="中文名字"><el-input v-model="form.name"></el-input></el-form-item>
+  <el-form-item label="具体介绍"><el-input v-model="form.con"></el-input></el-form-item>
+  <el-form-item label="英文介绍"><el-input v-model="form.econ"></el-input></el-form-item>
+  <el-form-item label="图片">
+  <el-upload
+  action="/api/upload"
+  list-type="picture-card"
+  :on-preview="handlePictureCardPreview"
+  :on-remove="handleRemove">
+  <i class="el-icon-plus"></i>
+</el-upload>
+<el-dialog :visible.sync="dialogVisible">
+  <img width="100%" :src="dialogImageUrl" alt="">
+</el-dialog>
+  </el-form-item>
+  <el-form-item label="减价价格"><el-input v-model="form.offprice"></el-input></el-form-item>
+  <el-form-item label="价格"><el-input v-model="form.price"></el-input></el-form-item>
+  <el-form-item label="数量"><el-input v-model="form.amount"></el-input></el-form-item>
+  <el-form-item label="度数"><el-input v-model="form.degra"></el-input></el-form-item>
+  <el-form-item label="容积"><el-input v-model="form.sap"></el-input></el-form-item>
+  <el-form-item label="口味"><el-input v-model="form.type"></el-input></el-form-item>
+  
+  <el-form-item>
+    <el-button type="primary" @click="onSubmit">提交</el-button>
+    <el-button @click='dialogVisible=false'> 取消</el-button>
+  </el-form-item>
+</el-form>  
+</el-dialog>
+<template>
+  <el-button type="text" :visible.sync="messbox"></el-button>
+</template>
     </div>
 </template>
 <script>
@@ -44,41 +94,96 @@ export default {
     name:'product',
     data(){
         return{
-         tableData: [{
-          id:1,   
-          times: '2016-05-02',
-          name: '王小虎',
-          comment: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          id:2,   
-          times: '2016-05-02',
-          name: '王小虎',
-          comment: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          id:3,   
-          times: '2016-05-02',
-          name: '王小虎',
-          comment: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          id:4,   
-          times: '2016-05-02',
-          name: '王小虎',
-          comment: '上海市普陀区金沙江路 1518 弄'
-        },
-        ]
+         tableData: [],
+         form:{
+          //  id:'',
+           title:'',
+           name:'',
+           con:'',
+           econ:'',
+           img:'',
+           offprice:'',
+           price:'',
+           amount:'',
+           degra:'',
+           sap:'',
+           type:''
+         },
+         messbox:false,
+         editform:{},
+         dialogImageUrl: '',
+         dialogVisible: false,
+         dialogFormVisible: false,
+         editvisible:false
         }
     },
-     methods: {
+    created(){
+     this.$http.get('/api/poduct').then(res=>{
+       this.tableData=res.body;
+      //  console.log(this.tableData);
+     });
      
+    },
+     methods: {
+     handleEdit(index,row){
+       this.editform=row;
+       this.editvisible=true;
+     },
       handleDelete(index, row) {
-        console.log(index, row);
+       let id=row.id;
+       this.$http.get(`/api/poduct/delete?id=${id}`).then(res=>{
+         console.log(res);
+         if(res.body=='1'){
+           console.log('ok');
+           
+         }else{
+            confirm('o no ');
+         }
+       })       
+      },
+       onSubmit() {
+         let obj=this.form;
+        //  this.tableData.push(obj);
+        //  console.log(obj);
+         this.$http.post(`/api/poduct/add`,obj,{headers:{
+           "content-type":'application/json'
+         }}).then(res=>{
+          if(res.body=='1'){
+            this.$alert('添加成功', '添加商品');
+        this.messbox;
+          }else{
+            alert('o no');
+          }
+     })
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+      editsub(){
+        let obj=this.editform;
+         this.$http.post(`/api/poduct/edit`,obj,{headers:{
+           "content-type":'application/json'
+         }}).then(res=>{
+          if(res.body=='1'){
+            this.$alert('修改成功', '修改商品');
+        this.messbox;
+          }else{
+            alert('o no');
+          }
+       })
       }
     }
 }
 </script>
 <style lang="scss" scoped>
-
+  .mybtn{
+    margin-bottom:40px;
+  }
+  .mytab{
+    margin-bottom:40px;
+  }
 </style>
