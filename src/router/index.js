@@ -7,6 +7,7 @@ import Shopcar from '@/components/shopcar/shopcar'
 import User from '@/components/user/user'
 import Product from '@/components/product/product'
 import Book from '@/components/book/book'
+import Address from '@/components/address/address'
 
 Vue.use(Router)
 
@@ -44,6 +45,11 @@ export default new Router({
           name:'Book',
           component:Book
         },
+        {
+          path:'address',
+          name:'Address',
+          component:Address
+        }
        
       ]
     },

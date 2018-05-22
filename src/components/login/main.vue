@@ -27,7 +27,7 @@
             @close="handleClose">
             <template v-for='(item,n) in arr' >
               <router-link :to='item.to' :key='n'>
-             <el-menu-item :key="n" :index='n' @click='mun=n' >
+             <el-menu-item :key="n" :index=String(n) @click='mun=n' >
               <i :class="item.class"></i>
               <span slot="title">{{item.title}}</span>
             </el-menu-item>
@@ -58,7 +58,7 @@ export default {
          {class:'el-icon-document',title:'订单管理',to:'/book'},
          {class:'el-icon-goods',title:'购物车管理',to:'/shopcar'},
          {class:'el-icon-star-off',title:'评论管理',to:'/comment'},
-         
+         {class:'el-icon-location',title:'收货地址管理',to:'/address'},
        ],
     }
   },
