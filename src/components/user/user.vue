@@ -44,7 +44,7 @@
       }
     },
     created(){
-      this.$http.get('/api/user').then(response => {
+      this.$http.get('/api/coustmer').then(response => {
         this.tableData=response.body;
       });
     }
