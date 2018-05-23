@@ -14,7 +14,11 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>我的消息</el-dropdown-item>
           <el-dropdown-item>设置</el-dropdown-item>
-          <el-dropdown-item><router-link to="/login">退出登录</router-link></el-dropdown-item>
+          <el-dropdown-item >
+            <span @click="exit()">
+                          退出登录
+            </span>
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </el-header>
@@ -64,13 +68,22 @@ export default {
     }
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      exit(){
+          localStorage.login="no";
+          this.$router.push("/login");
+      }
+  },
+    created(){
+      if(localStorage.login!="ok"){
+          this.$router.push("/login");
+      }
     }
-  }
 }
 </script>
 
