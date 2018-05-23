@@ -8,12 +8,12 @@ import User from '@/components/user/user'
 import Product from '@/components/product/product'
 import Book from '@/components/book/book'
 import Address from '@/components/address/address'
-
+import Pass from '@/components/pass/pass'
 Vue.use(Router)
 
 export default new Router({
   routes: [
-   
+
     {
       path: '/',
       redirect:'/user',
@@ -43,14 +43,19 @@ export default new Router({
         {
           path:'book',
           name:'Book',
-          component:Book
+          component:Book,
         },
         {
           path:'address',
           name:'Address',
           component:Address
+        },
+        {
+          path:'pass',
+          name:'Pass',
+          component:Pass
         }
-       
+
       ]
     },
     {
@@ -58,7 +63,7 @@ export default new Router({
       name:'login',
       component:login
     },
-   
-   
+
+
   ]
 })

@@ -4,13 +4,25 @@
   <!-- <el-button type="primary" target='#add' class='mybtn'> 添加商品</el-button> -->
   <el-button type="primary" @click="dialogFormVisible = true" class='mybtn'>添加商品</el-button>
 </el-row>
-<el-table :data="tableData" stripe border style="width: 100%" class='mytab' title='商品展示'>
+<el-container>
+  <el-header><h1>商品列表</h1> </el-header>
+  
+</el-container>
+<el-table :data="tableData" stripe border style="width: 100%" height="600" class='mytab' title='商品展示'>
 <el-table-column align='center' prop="id" label="id" fixed width="100"></el-table-column>
 <el-table-column align='center' prop="title" label="描述" width="200"> </el-table-column>
 <el-table-column align='center' prop="name" label="中文名字" width="200"> </el-table-column>
 <el-table-column align='center' prop="con" label="具体介绍" width="300"> </el-table-column>
 <el-table-column align='center' prop="econ" label="英文介绍" width="200"> </el-table-column>
-<el-table-column align='center' prop="img" label="图片" width="100"> </el-table-column> 
+<!-- <el-table-column align='center' prop="img" label="图片" width="100"> -->
+ <!-- <el-upload v-for='(item,index) in tableData' :key='index'
+  class="upload-demo"
+  :on-preview="handlePreview"
+  :on-remove="handleRemove"
+  :file-list="JSON.parse(item.img)"
+  list-type="picture">
+</el-upload> -->
+ <!-- </el-table-column>  -->
 <el-table-column align='center' prop="offprice" label="减价价格" width="100"> </el-table-column>
 <el-table-column align='center' prop="price" label="价格" width="100"> </el-table-column>
 <el-table-column align='center' prop="amount" label="数量" width='100'> </el-table-column>
@@ -31,12 +43,22 @@ type="danger"
 </el-table>
 <el-dialog title="修改商品" :visible.sync="editvisible">
 <el-form ref="form" :model="editform" label-width="80px">
-  <el-form-item label="ID"><el-input v-model="editform.id"></el-input></el-form-item>
+  <el-form-item label="ID"><el-input v-model="editform.id" :disabled='true'></el-input></el-form-item>
   <el-form-item label="描述"><el-input v-model="editform.title"></el-input></el-form-item>
   <el-form-item label="中文名字"><el-input v-model="editform.name"></el-input></el-form-item>
   <el-form-item label="具体介绍"><el-input v-model="editform.con"></el-input></el-form-item>
   <el-form-item label="英文介绍"><el-input v-model="editform.econ"></el-input></el-form-item>
-  <el-form-item label="图片"><el-input v-model="editform.img"></el-input>
+  <el-form-item label="图片">
+    <el-upload
+  class="upload-demo"
+  action="/api/poduct/upload"
+  :on-preview="handlePreview"
+  :on-remove="handleRemove"
+  :file-list="form.img"
+  list-type="picture">
+  <el-button size="small" type="primary">点击上传</el-button>
+</el-upload>
+  </el-input>
   </el-form-item>
   <el-form-item label="减价价格"><el-input v-model="editform.offprice"></el-input></el-form-item>
   <el-form-item label="价格"><el-input v-model="editform.price"></el-input></el-form-item>
@@ -61,9 +83,10 @@ type="danger"
   <el-form-item label="英文介绍"><el-input v-model="form.econ"></el-input></el-form-item>
   <el-form-item label="图片">
   <el-upload
-  action="/api/upload"
+  action="/api/poduct/upload"
   list-type="picture-card"
-  :on-preview="handlePictureCardPreview"
+  :file-list="form.img"  
+  :on-preview="handlePreview"
   :on-remove="handleRemove">
   <i class="el-icon-plus"></i>
 </el-upload>
@@ -87,6 +110,7 @@ type="danger"
 <template>
   <el-button type="text" :visible.sync="messbox"></el-button>
 </template>
+
     </div>
 </template>
 <script>
@@ -101,7 +125,7 @@ export default {
            name:'',
            con:'',
            econ:'',
-           img:'',
+           img:[],
            offprice:'',
            price:'',
            amount:'',
@@ -114,13 +138,17 @@ export default {
          dialogImageUrl: '',
          dialogVisible: false,
          dialogFormVisible: false,
-         editvisible:false
+         editvisible:false,
+        
         }
     },
     created(){
-     this.$http.get('/api/poduct').then(res=>{
+     
+     this.$http.get(`/api/poduct?`).then(res=>{
+       if(res.body.img){
+         re.body.img=JSON.parse(res.body.img);
+       }
        this.tableData=res.body;
-      //  console.log(this.tableData);
      });
      
     },
@@ -132,28 +160,38 @@ export default {
       handleDelete(index, row) {
        let id=row.id;
        this.$http.get(`/api/poduct/delete?id=${id}`).then(res=>{
-         console.log(res);
          if(res.body=='1'){
-           console.log('ok');
+           let index=this.tableData.findIndex(val=>val.id==id);
+           this.tableData.splice(index,1);
+          this.$message.error('哦,你真的删了');
            
          }else{
-            confirm('o no ');
+            this.$message({message:'哈哈,没删掉我哦',type:'warning'})
          }
        })       
       },
+      handleRemove(file,filelist){
+         this.form.img=filelist; 
+      },
+      handlePreview(file,filelist){
+          this.form.img=filelist;
+      },
        onSubmit() {
-         let obj=this.form;
-        //  this.tableData.push(obj);
+         let obj={...this.form};
+         obj.img=JSON.stringify(obj.img);
         //  console.log(obj);
          this.$http.post(`/api/poduct/add`,obj,{headers:{
            "content-type":'application/json'
          }}).then(res=>{
-          if(res.body=='1'){
-            this.$alert('添加成功', '添加商品');
-        this.messbox;
+          if(res.body=='0'){
+            this.$message.error('失败了');
           }else{
-            alert('o no');
+            this.$message({message:'添加成功了哦', type:'success'});
+            this.form.id=res.body;
+            this.tableData.push(this.form)
           }
+           this.dialogFormVisible=false;
+          
      })
       },
       handleRemove(file, fileList) {
@@ -164,24 +202,34 @@ export default {
         this.dialogVisible = true;
       },
       editsub(){
-        let obj=this.editform;
+        let obj={...this.editform};
+        obj.img=JSON.stringify(obj.img);
          this.$http.post(`/api/poduct/edit`,obj,{headers:{
            "content-type":'application/json'
          }}).then(res=>{
           if(res.body=='1'){
-            this.$alert('修改成功', '修改商品');
-        this.messbox;
+            this.$message({message:'修改成功了哦', type:'success'});
           }else{
-            alert('o no');
+           this.$message.error('失败了');
           }
+          this.editvisible=false;
        })
       }
     }
 }
 </script>
 <style lang="scss" scoped>
+ .el-header{
+    background-color: #5394EC;
+    color: #fff;
+    text-align: center;
+    line-height: 60px;
+    h1{
+      font-size:26px;
+    }
+  }
   .mybtn{
-    margin-bottom:40px;
+    margin-bottom:20px;
   }
   .mytab{
     margin-bottom:40px;
