@@ -4,7 +4,10 @@
   <!-- <el-button type="primary" target='#add' class='mybtn'> 添加商品</el-button> -->
   <el-button type="primary" @click="dialogFormVisible = true" class='mybtn'>添加商品</el-button>
 </el-row>
-<h2>商品列表</h2>
+<el-container>
+  <el-header><h1>商品列表</h1> </el-header>
+  
+</el-container>
 <el-table :data="tableData" stripe border style="width: 100%" class='mytab' title='商品展示'>
 <el-table-column align='center' prop="id" label="id" fixed width="100"></el-table-column>
 <el-table-column align='center' prop="title" label="描述" width="200"> </el-table-column>
@@ -185,8 +188,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+ .el-header{
+    background-color: #5394EC;
+    color: #fff;
+    text-align: center;
+    line-height: 60px;
+    h1{
+      font-size:26px;
+    }
+  }
   .mybtn{
-    margin-bottom:40px;
+    margin-bottom:20px;
   }
   .mytab{
     margin-bottom:40px;
