@@ -1,4 +1,5 @@
 <template>
+
   <el-container>
     <el-header>
       <h3>REALIST  后台管理系统</h3>
@@ -13,7 +14,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>我的消息</el-dropdown-item>
           <el-dropdown-item>设置</el-dropdown-item>
-          <el-dropdown-item>退出登录</el-dropdown-item>
+          <el-dropdown-item><router-link to="/login">退出登录</router-link></el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </el-header>
