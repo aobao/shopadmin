@@ -60,6 +60,7 @@ export default {
          {class:'el-icon-goods',title:'购物车管理',to:'/shopcar'},
          {class:'el-icon-star-off',title:'评论管理',to:'/comment'},
          {class:'el-icon-location',title:'收货地址管理',to:'/address'},
+         {class:'el-icon-edit',title:'密码管理',to:'/pass'}
        ],
     }
   },

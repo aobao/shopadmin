@@ -8,7 +8,7 @@ import User from '@/components/user/user'
 import Product from '@/components/product/product'
 import Book from '@/components/book/book'
 import Address from '@/components/address/address'
-
+import Pass from '@/components/pass/pass'
 Vue.use(Router)
 
 export default new Router({
@@ -49,6 +49,11 @@ export default new Router({
           path:'address',
           name:'Address',
           component:Address
+        },
+        {
+          path:'pass',
+          name:'Pass',
+          component:Pass
         }
 
       ]

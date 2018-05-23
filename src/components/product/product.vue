@@ -8,13 +8,21 @@
   <el-header><h1>商品列表</h1> </el-header>
   
 </el-container>
-<el-table :data="tableData" stripe border style="width: 100%" class='mytab' title='商品展示'>
+<el-table :data="tableData" stripe border style="width: 100%" height="600" class='mytab' title='商品展示'>
 <el-table-column align='center' prop="id" label="id" fixed width="100"></el-table-column>
 <el-table-column align='center' prop="title" label="描述" width="200"> </el-table-column>
 <el-table-column align='center' prop="name" label="中文名字" width="200"> </el-table-column>
 <el-table-column align='center' prop="con" label="具体介绍" width="300"> </el-table-column>
 <el-table-column align='center' prop="econ" label="英文介绍" width="200"> </el-table-column>
-<el-table-column align='center' prop="img" label="图片" width="100"> </el-table-column> 
+<!-- <el-table-column align='center' prop="img" label="图片" width="100"> -->
+ <!-- <el-upload v-for='(item,index) in tableData' :key='index'
+  class="upload-demo"
+  :on-preview="handlePreview"
+  :on-remove="handleRemove"
+  :file-list="JSON.parse(item.img)"
+  list-type="picture">
+</el-upload> -->
+ <!-- </el-table-column>  -->
 <el-table-column align='center' prop="offprice" label="减价价格" width="100"> </el-table-column>
 <el-table-column align='center' prop="price" label="价格" width="100"> </el-table-column>
 <el-table-column align='center' prop="amount" label="数量" width='100'> </el-table-column>
@@ -40,7 +48,17 @@ type="danger"
   <el-form-item label="中文名字"><el-input v-model="editform.name"></el-input></el-form-item>
   <el-form-item label="具体介绍"><el-input v-model="editform.con"></el-input></el-form-item>
   <el-form-item label="英文介绍"><el-input v-model="editform.econ"></el-input></el-form-item>
-  <el-form-item label="图片"><el-input v-model="editform.img"></el-input>
+  <el-form-item label="图片">
+    <el-upload
+  class="upload-demo"
+  action="/api/poduct/upload"
+  :on-preview="handlePreview"
+  :on-remove="handleRemove"
+  :file-list="form.img"
+  list-type="picture">
+  <el-button size="small" type="primary">点击上传</el-button>
+</el-upload>
+  </el-input>
   </el-form-item>
   <el-form-item label="减价价格"><el-input v-model="editform.offprice"></el-input></el-form-item>
   <el-form-item label="价格"><el-input v-model="editform.price"></el-input></el-form-item>
@@ -65,9 +83,10 @@ type="danger"
   <el-form-item label="英文介绍"><el-input v-model="form.econ"></el-input></el-form-item>
   <el-form-item label="图片">
   <el-upload
-  action="/api/upload"
+  action="/api/poduct/upload"
   list-type="picture-card"
-  :on-preview="handlePictureCardPreview"
+  :file-list="form.img"  
+  :on-preview="handlePreview"
   :on-remove="handleRemove">
   <i class="el-icon-plus"></i>
 </el-upload>
@@ -91,6 +110,7 @@ type="danger"
 <template>
   <el-button type="text" :visible.sync="messbox"></el-button>
 </template>
+
     </div>
 </template>
 <script>
@@ -105,7 +125,7 @@ export default {
            name:'',
            con:'',
            econ:'',
-           img:'',
+           img:[],
            offprice:'',
            price:'',
            amount:'',
@@ -118,13 +138,17 @@ export default {
          dialogImageUrl: '',
          dialogVisible: false,
          dialogFormVisible: false,
-         editvisible:false
+         editvisible:false,
+        
         }
     },
     created(){
-     this.$http.get('/api/poduct').then(res=>{
+     
+     this.$http.get(`/api/poduct?`).then(res=>{
+       if(res.body.img){
+         re.body.img=JSON.parse(res.body.img);
+       }
        this.tableData=res.body;
-      //  console.log(this.tableData);
      });
      
     },
@@ -146,9 +170,15 @@ export default {
          }
        })       
       },
+      handleRemove(file,filelist){
+         this.form.img=filelist; 
+      },
+      handlePreview(file,filelist){
+          this.form.img=filelist;
+      },
        onSubmit() {
-         let obj=this.form;
-        //  this.tableData.push(obj);
+         let obj={...this.form};
+         obj.img=JSON.stringify(obj.img);
         //  console.log(obj);
          this.$http.post(`/api/poduct/add`,obj,{headers:{
            "content-type":'application/json'
@@ -172,7 +202,8 @@ export default {
         this.dialogVisible = true;
       },
       editsub(){
-        let obj=this.editform;
+        let obj={...this.editform};
+        obj.img=JSON.stringify(obj.img);
          this.$http.post(`/api/poduct/edit`,obj,{headers:{
            "content-type":'application/json'
          }}).then(res=>{
