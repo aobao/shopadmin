@@ -52,12 +52,14 @@ type="danger"
     <el-upload
   class="upload-demo"
   action="/api/poduct/upload"
-  :on-preview="handlePreview"
+  :on-success='handleSuccess'  
   :on-remove="handleRemove"
-  :file-list="form.img"
+  :file-list="editform.img"
   list-type="picture">
   <el-button size="small" type="primary">点击上传</el-button>
+  
 </el-upload>
+
   </el-input>
   </el-form-item>
   <el-form-item label="减价价格"><el-input v-model="editform.offprice"></el-input></el-form-item>
@@ -86,7 +88,7 @@ type="danger"
   action="/api/poduct/upload"
   list-type="picture-card"
   :file-list="form.img"  
-  :on-preview="handlePreview"
+  :on-success='handleSuccess'
   :on-remove="handleRemove">
   <i class="el-icon-plus"></i>
 </el-upload>
@@ -145,15 +147,21 @@ export default {
     created(){
      
      this.$http.get(`/api/poduct?`).then(res=>{
-       if(res.body.img){
-         re.body.img=JSON.parse(res.body.img);
-       }
+       
        this.tableData=res.body;
      });
      
     },
      methods: {
+       handleRemove(file,filelist){
+         this.form.img=filelist; 
+      },
+      handleSuccess(res,file,filelist){
+          this.form.img=filelist;
+          console.log(filelist);
+      },
      handleEdit(index,row){
+       row.img=row.img? JSON.parse(row.img):[]
        this.editform=row;
        this.editvisible=true;
      },
@@ -170,16 +178,10 @@ export default {
          }
        })       
       },
-      handleRemove(file,filelist){
-         this.form.img=filelist; 
-      },
-      handlePreview(file,filelist){
-          this.form.img=filelist;
-      },
+      
        onSubmit() {
          let obj={...this.form};
          obj.img=JSON.stringify(obj.img);
-        //  console.log(obj);
          this.$http.post(`/api/poduct/add`,obj,{headers:{
            "content-type":'application/json'
          }}).then(res=>{
@@ -192,11 +194,9 @@ export default {
           }
            this.dialogFormVisible=false;
           
-     })
+      })
       },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
+      
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
