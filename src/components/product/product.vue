@@ -154,14 +154,21 @@ export default {
     },
      methods: {
        handleRemove(file,filelist){
-         this.form.img=filelist; 
+         this.editform.img=filelist;
+         this.form.img=filelist;
+          
       },
+      // handleAdd(file,filelist){
+      //   this.edirform
+      // },
       handleSuccess(res,file,filelist){
-          this.form.img=filelist;
-          console.log(filelist);
+          this.editform.img=filelist;
+          this.form.img=filelist;          
+          // console.log(filelist);
       },
      handleEdit(index,row){
-       row.img=row.img? JSON.parse(row.img):[]
+       row.img=row.img? JSON.parse(row.img):[];
+       console.log(row.img);
        this.editform=row;
        this.editvisible=true;
      },
