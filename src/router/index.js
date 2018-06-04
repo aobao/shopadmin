@@ -1,11 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Mainadmin from '@/components/login/main'
+// import Mainadmin from '@/components/login/main'
+Mainadmin:resolve =>require(['@/components/login/main'],resolve)
 import login from '@/components/login/login'
-import Comment from '@/components/comment/comment'
-import Shopcar from '@/components/shopcar/shopcar'
+login:resolve =>require(['@/components/login/login'],resolve)
+// import Comment from '@/components/comment/comment'
+Comment:resolve =>require(['@/components/comment/comment'],resolve)
+// import Shopcar from '@/components/shopcar/shopcar'
+Shopcar:resolve =>require(['@/components/shopcar/shopcar'],resolve)
 import User from '@/components/user/user'
+User:resolve =>require(['@/components/user/user'],resolve)
 import Product from '@/components/product/product'
+Product:resolve =>require(['@/components/product/product'],resolve)
 import Book from '@/components/book/book'
 import Address from '@/components/address/address'
 import Pass from '@/components/pass/pass'
